@@ -3,220 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Colaborador</title>
+    <title>Gestão de EPIs - Cadastro de Colaborador</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-light">
+<body>
 
-<div class="container mt-5 mb-5">
-    <div class="row justify-content-center mb-4">
-        <div class="col-md-10">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white text-center">
-                    <h4>Cadastro de Colaboradores</h4>
-                </div>
-                <div class="card-body">
-                    <div id="mensagem-alerta"></div>
-
-                    <form id="formCadastro">
-                        <input type="hidden" id="idColaborador">
-                        
-                        <div class="mb-3">
-                            <label for="nome" class="form-label">Nome Completo</label>
-                            <input type="text" class="form-control" id="nome" required>
-                        </div>
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="cpf" class="form-label">CPF</label>
-                                <input type="text" class="form-control" id="cpf" maxlength="11" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="cargo" class="form-label">Cargo</label>
-                                <input type="text" class="form-control" id="cargo" required>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="setor" class="form-label">Setor</label>
-                                <input type="text" class="form-control" id="setor" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="status" class="form-label">Status</label>
-                                <select class="form-select" id="status" required>
-                                    <option value="Ativo">Ativo</option>
-                                    <option value="Inativo">Inativo</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-success" id="btnSalvar">Salvar Colaborador</button>
-                            <button type="button" class="btn btn-secondary d-none" id="btnCancelar" onclick="cancelarEdicao()">Cancelar Edição</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <i class="bi bi-shield-check text-primary"></i> SisEPI
         </div>
-    </div>
-
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card shadow">
-                <div class="card-header bg-secondary text-white">
-                    <h5 class="mb-0">Lista de Colaboradores</h5>
-                </div>
-                <div class="card-body">
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" id="inputPesquisa" placeholder="Pesquisar por nome...">
-                        <button class="btn btn-outline-secondary" type="button" id="btnPesquisar">Pesquisar</button>
-                    </div>
-                    
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nome</th>
-                                    <th>CPF</th>
-                                    <th>Cargo</th>
-                                    <th>Setor</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabelaColaboradores">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+        <ul class="sidebar-menu">
+            <li><a href="index.html"><i class="bi bi-house-door"></i> Home</a></li>
+            <li class="mt-3 mb-1 px-4 text-uppercase text-secondary" style="font-size: 0.75rem; letter-spacing: 1px;">Cadastros</li>
+            <li><a href="cadastro_colaborador.html" class="active"><i class="bi bi-person-badge"></i> Colaboradores</a></li>
+            <li><a href="#"><i class="bi bi-tools"></i> Equipamentos</a></li>
+            <li class="mt-3 mb-1 px-4 text-uppercase text-secondary" style="font-size: 0.75rem; letter-spacing: 1px;">Ação</li>
+            <li><a href="#"><i class="bi bi-arrow-left-right"></i> Controle de EPI</a></li>
+            <li class="mt-3 mb-1 px-4 text-uppercase text-secondary" style="font-size: 0.75rem; letter-spacing: 1px;">Relatórios</li>
+            <li><a href="#"><i class="bi bi-file-earmark-text"></i> Empréstimos</a></li>
+            <li class="mt-3 mb-1 px-4 text-uppercase text-secondary" style="font-size: 0.75rem; letter-spacing: 1px;">Configurações</li>
+            <li><a href="#"><i class="bi bi-person-gear"></i> Perfil</a></li>
+            <li><a href="#"><i class="bi bi-gear"></i> Sistema</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <a href="#"><i class="bi bi-box-arrow-left"></i> Sair do Sistema</a>
         </div>
-    </div>
-</div>
+    </aside>
 
-<script>
-    document.getElementById('formCadastro').addEventListener('submit', async function(event) {
-        event.preventDefault();
-
-        const id = document.getElementById('idColaborador').value;
-        const nome = document.getElementById('nome').value;
-        const cpf = document.getElementById('cpf').value;
-        const cargo = document.getElementById('cargo').value;
-        const setor = document.getElementById('setor').value;
-        const status = document.getElementById('status').value;
-
-        const alerta = document.getElementById('mensagem-alerta');
-        alerta.innerHTML = '';
-
-        const url = id ? `http://localhost:3000/colaboradores/${id}` : 'http://localhost:3000/colaboradores';
-        const method = id ? 'PUT' : 'POST';
-
-        try {
-            const response = await fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ nome, cpf, cargo, setor, status })
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                alerta.innerHTML = '<div class="alert alert-success">' + result.message + '</div>';
-                cancelarEdicao();
-                carregarColaboradores();
-            } else {
-                alerta.innerHTML = '<div class="alert alert-danger">' + result.error + '</div>';
-            }
-        } catch (error) {
-            alerta.innerHTML = '<div class="alert alert-danger">Erro de conexão com o servidor.</div>';
-        }
-    });
-
-    async function carregarColaboradores(busca = '') {
-        try {
-            const response = await fetch('http://localhost:3000/colaboradores?busca=' + busca);
-            const colaboradores = await response.json();
-            
-            const tbody = document.getElementById('tabelaColaboradores');
-            tbody.innerHTML = '';
-
-            colaboradores.forEach(c => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${c.id}</td>
-                    <td>${c.nome}</td>
-                    <td>${c.cpf}</td>
-                    <td>${c.cargo}</td>
-                    <td>${c.setor}</td>
-                    <td>${c.status}</td>
-                    <td>
-                        <button class="btn btn-sm btn-warning" onclick="prepararEdicao(${c.id}, '${c.nome}', '${c.cpf}', '${c.cargo}', '${c.setor}', '${c.status}')">Editar</button>
-                        <button class="btn btn-sm btn-danger" onclick="excluirColaborador(${c.id})">Excluir</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        } catch (error) {}
-    }
-
-    document.getElementById('btnPesquisar').addEventListener('click', () => {
-        const busca = document.getElementById('inputPesquisa').value;
-        carregarColaboradores(busca);
-    });
-
-    function prepararEdicao(id, nome, cpf, cargo, setor, status) {
-        document.getElementById('idColaborador').value = id;
-        document.getElementById('nome').value = nome;
-        document.getElementById('cpf').value = cpf;
-        document.getElementById('cargo').value = cargo;
-        document.getElementById('setor').value = setor;
-        document.getElementById('status').value = status;
-
-        document.getElementById('btnSalvar').innerText = 'Atualizar Colaborador';
-        document.getElementById('btnSalvar').classList.replace('btn-success', 'btn-warning');
-        document.getElementById('btnCancelar').classList.remove('d-none');
+    <div class="main-wrapper">
         
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+        <header class="top-header">
+            <h2 class="header-title">Gerenciamento de Colaboradores</h2>
+            <div class="user-profile">
+                <div class="user-info text-end">
+                    <span class="user-name">João Silva</span>
+                    <span class="user-role">Administrador</span>
+                </div>
+                <img src="https://ui-avatars.com/api/?name=Joao+Silva&background=2563eb&color=fff" alt="Foto do Usuário">
+            </div>
+        </header>
 
-    function cancelarEdicao() {
-        document.getElementById('formCadastro').reset();
-        document.getElementById('idColaborador').value = '';
-        document.getElementById('btnSalvar').innerText = 'Salvar Colaborador';
-        document.getElementById('btnSalvar').classList.replace('btn-warning', 'btn-success');
-        document.getElementById('btnCancelar').classList.add('d-none');
-    }
-
-    async function excluirColaborador(id) {
-        if (confirm('Tem certeza que deseja excluir este colaborador?')) {
-            try {
-                const response = await fetch('http://localhost:3000/colaboradores/' + id, {
-                    method: 'DELETE'
-                });
+        <main class="content-area">
+            <div class="container-fluid">
                 
-                const result = await response.json();
-                const alerta = document.getElementById('mensagem-alerta');
-                
-                if (response.ok) {
-                    alerta.innerHTML = '<div class="alert alert-success">' + result.message + '</div>';
-                    carregarColaboradores();
-                } else {
-                    alerta.innerHTML = '<div class="alert alert-danger">' + result.error + '</div>';
-                }
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            } catch (error) {
-                alert('Erro de conexão com o servidor.');
-            }
-        }
-    }
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex align-items-center gap-2">
+                                <i class="bi bi-person-plus text-primary fs-5"></i> 
+                                <h5 id="tituloFormulario">Cadastrar Novo Colaborador</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="mensagem-alerta"></div>
 
-    carregarColaboradores();
-</script>
+                                <form id="formCadastro">
+                                    <input type="hidden" id="idColaborador">
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="nome" class="form-label">Nome Completo</label>
+                                            <input type="text" class="form-control" id="nome" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="cpf" class="form-label">CPF</label>
+                                            <input type="text" class="form-control" id="cpf" maxlength="11" placeholder="Apenas números" required>
+                                        </div>
+                                    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                                    <div class="row mb-4">
+                                        <div class="col-md-4">
+                                            <label for="cargo" class="form-label">Cargo</label>
+                                            <input type="text" class="form-control" id="cargo" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="setor" class="form-label">Setor</label>
+                                            <input type="text" class="form-control" id="setor" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="status" class="form-label">Status</label>
+                                            <select class="form-select" id="status" required>
+                                                <option value="Ativo">Ativo</option>
+                                                <option value="Inativo">Inativo</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button type="button" class="btn btn-outline-secondary d-none" id="btnCancelar" onclick="cancelarEdicao()">Cancelar Edição</button>
+                                        <button type="submit" class="btn btn-primary px-4" id="btnSalvar">
+                                            <i class="bi bi-check2-circle"></i> Salvar Colaborador
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-list-ul text-primary fs-5"></i>
+                                    <h5>Lista de Colaboradores</h5>
+                                </div>
+                                <div class="input-group" style="width: 300px;">
+                                    <input type="text" class="form-control form-control-sm" id="inputPesquisa" placeholder="Pesquisar por nome...">
+                                    <button class="btn btn-outline-secondary btn-sm" type="button" id="btnPesquisar">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th class="ps-4">ID</th>
+                                                <th>Nome</th>
+                                                <th>CPF</th>
+                                                <th>Cargo</th>
+                                                <th>Setor</th>
+                                                <th>Status</th>
+                                                <th class="text-end pe-4">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tabelaColaboradores">
+                                            </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/colaborador.js"></script>
 </body>
 </html>
