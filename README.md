@@ -20,7 +20,7 @@ Projeto desenvolvido para a atividade de Desenvolvimento de Sistemas. O sistema 
    - Abra o XAMPP e inicie os módulos Apache e MySQL.
    - Acesse o phpMyAdmin no navegador (`http://localhost/phpmyadmin/`).
    - Crie um banco de dados chamado `sistema_emprestimos`.
-   - Importe o arquivo `BD ATIV SENAI.sql` para dentro desse banco recém-criado.
+   - Importe o arquivo `BD ATIV SENAI.sql` (que está dentro da pasta /database) para dentro desse banco recém-criado.
 
 2. **Iniciando o Servidor (Back-end):**
    - Abra o terminal na pasta raiz do projeto.
