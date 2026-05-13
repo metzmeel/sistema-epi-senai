@@ -6,7 +6,7 @@ Projeto desenvolvido para a atividade de Desenvolvimento de Sistemas. O sistema 
 - [x] Tela Base (Home e Menu Lateral) implementada.
 - [x] Cadastro e listagem de Colaboradores implementados.
 - [x] Separação de arquivos CSS e JS concluída.
-- [ ] Cadastro de Equipamentos (Pendente).
+- [x] Cadastro de Equipamentos (Pendente).
 - [ ] Controle de EPI / Empréstimos (Pendente).
 
 ## 💻 Tecnologias Utilizadas
