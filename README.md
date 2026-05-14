@@ -7,7 +7,7 @@ Projeto desenvolvido para a atividade de Desenvolvimento de Sistemas. O sistema 
 - [x] Cadastro e listagem de Colaboradores implementados.
 - [x] Separação de arquivos CSS e JS concluída.
 - [x] Cadastro de Equipamentos (Pendente).
-- [ ] Controle de EPI / Empréstimos (Pendente).
+- [x] Controle de EPI / Empréstimos (Pendente).
 
 ## 💻 Tecnologias Utilizadas
 - HTML5, CSS3 e Bootstrap 5 (Front-end)
