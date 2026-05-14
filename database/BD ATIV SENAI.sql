@@ -57,9 +57,15 @@ CREATE TABLE Emprestimo (
     id_colaborador INT,
     
     data DATE,
-    status VARCHAR(50), -- Vigente, Pendente, Finalizado
+    data_prevista_devolucao DATE,
+    data_devolucao DATE,
+    status VARCHAR(50), -- Emprestado, Fornecido, Devolvido, Danificado, Perdido
+    condicoes VARCHAR(255),
+    observacao_devolucao VARCHAR(255),
     
     FOREIGN KEY (id_usuario) REFERENCES Usuario_Sistema(id),
     FOREIGN KEY (id_equipamento) REFERENCES Equipamento(id),
     FOREIGN KEY (id_colaborador) REFERENCES Colaborador(id)
 );
+
+

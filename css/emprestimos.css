@@ -1,0 +1,148 @@
+.emprestimos-page {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(241, 245, 249, 0.96)),
+        #f1f5f9;
+}
+
+.emprestimo-summary {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(3, minmax(150px, 1fr));
+    margin-bottom: 24px;
+}
+
+.summary-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+    min-height: 110px;
+    padding: 20px;
+    text-align: center;
+}
+
+.summary-value {
+    color: #0f172a;
+    display: block;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.summary-label {
+    color: #64748b;
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-top: 10px;
+}
+
+.emprestimo-form-card,
+.emprestimo-list-card {
+    border-radius: 8px;
+}
+
+.emprestimo-list-header {
+    align-items: center;
+    display: flex;
+    gap: 18px;
+    justify-content: space-between;
+}
+
+.emprestimo-list-actions {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    min-width: min(100%, 430px);
+}
+
+.emprestimo-list-actions .input-group {
+    flex: 1;
+}
+
+.emprestimo-table th,
+.emprestimo-table td {
+    vertical-align: middle;
+}
+
+.emprestimo-empty {
+    align-items: center;
+    color: #64748b;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: center;
+    min-height: 210px;
+    padding: 28px;
+    text-align: center;
+}
+
+.emprestimo-empty i {
+    color: #94a3b8;
+    font-size: 2.3rem;
+}
+
+.emprestimo-equipment {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.emprestimo-equipment strong {
+    color: #1e293b;
+}
+
+.emprestimo-equipment span {
+    color: #64748b;
+    font-size: 0.82rem;
+}
+
+.status-badge {
+    border-radius: 999px;
+    display: inline-flex;
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 7px 10px;
+}
+
+.status-emprestado {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.status-fornecido {
+    background: #ccfbf1;
+    color: #0f766e;
+}
+
+.status-devolvido {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-danificado {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-perdido {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+@media (max-width: 992px) {
+    .emprestimo-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .emprestimo-list-header,
+    .emprestimo-list-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .emprestimo-list-actions {
+        min-width: 100%;
+    }
+}

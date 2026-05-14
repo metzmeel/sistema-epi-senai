@@ -1,0 +1,66 @@
+.equipamentos-page {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(241, 245, 249, 0.96)),
+        #f1f5f9;
+}
+
+.equipamento-form-card,
+.equipamento-list-card {
+    border-radius: 8px;
+}
+
+.equipamento-list-header {
+    align-items: center;
+    display: flex;
+    gap: 18px;
+    justify-content: space-between;
+}
+
+.equipamento-search {
+    max-width: 360px;
+}
+
+.equipamento-table th,
+.equipamento-table td {
+    vertical-align: middle;
+}
+
+.status-badge {
+    border-radius: 999px;
+    display: inline-flex;
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 7px 10px;
+}
+
+.status-disponivel {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-emprestado {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.status-danificado {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-perdido {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+@media (max-width: 768px) {
+    .equipamento-list-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .equipamento-search {
+        max-width: none;
+    }
+}

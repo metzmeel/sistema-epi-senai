@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de EPIs - Empréstimos</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/emprestimos.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <i class="bi bi-shield-check text-primary"></i> SisEPI
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="index.html"><i class="bi bi-house-door"></i> Home</a></li>
+            <li class="mt-3 mb-1 px-4 text-uppercase text-secondary" style="font-size: 0.75rem; letter-spacing: 1px;">Cadastros</li>
+            <li><a href="cadastro_colaborador.html"><i class="bi bi-person-badge"></i> Colaboradores</a></li>
+            <li><a href="cadastro_equipamento.html"><i class="bi bi-tools"></i> Equipamentos</a></li>
+            <li class="mt-3 mb-1 px-4 text-uppercase text-secondary" style="font-size: 0.75rem; letter-spacing: 1px;">Ação</li>
+            <li><a href="controle_epi.html"><i class="bi bi-arrow-left-right"></i> Controle de EPI</a></li>
+            <li class="mt-3 mb-1 px-4 text-uppercase text-secondary" style="font-size: 0.75rem; letter-spacing: 1px;">Relatórios</li>
+            <li><a href="emprestimos.html" class="active"><i class="bi bi-file-earmark-text"></i> Empréstimos</a></li>
+            <li class="mt-3 mb-1 px-4 text-uppercase text-secondary" style="font-size: 0.75rem; letter-spacing: 1px;">Configurações</li>
+            <li><a href="#"><i class="bi bi-person-gear"></i> Perfil</a></li>
+            <li><a href="#"><i class="bi bi-gear"></i> Sistema</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <a href="#"><i class="bi bi-box-arrow-left"></i> Sair do Sistema</a>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="top-header">
+            <h2 class="header-title">Empréstimos de EPI</h2>
+            <div class="user-profile">
+                <div class="user-info text-end">
+                    <span class="user-name">João Silva</span>
+                    <span class="user-role">Administrador</span>
+                </div>
+                <img src="https://ui-avatars.com/api/?name=Joao+Silva&background=2563eb&color=fff" alt="Foto do Usuário">
+            </div>
+        </header>
+
+        <main class="content-area emprestimos-page">
+            <div class="container-fluid">
+                <section class="emprestimo-summary">
+                    <article class="summary-card">
+                        <span class="summary-value" id="totalDisponiveis">0</span>
+                        <span class="summary-label">Disponível</span>
+                    </article>
+                    <article class="summary-card">
+                        <span class="summary-value" id="totalEmprestados">0</span>
+                        <span class="summary-label">Emprestado</span>
+                    </article>
+                    <article class="summary-card">
+                        <span class="summary-value" id="totalVencidos">0</span>
+                        <span class="summary-label">Vencido</span>
+                    </article>
+                </section>
+
+                <section class="card emprestimo-form-card" id="areaFormularioEmprestimo">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <i class="bi bi-clipboard-plus text-primary fs-5"></i>
+                        <h5 id="tituloEmprestimo">Cadastro</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="emprestimoAlerta"></div>
+                        <form id="formEmprestimo">
+                            <input type="hidden" id="idEmprestimo">
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="emprestimoEquipamento" class="form-label">Equipamento</label>
+                                    <select class="form-select" id="emprestimoEquipamento" required></select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="emprestimoColaborador" class="form-label">Colaborador</label>
+                                    <select class="form-select" id="emprestimoColaborador" required></select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="dataEmprestimo" class="form-label">Data do empréstimo</label>
+                                    <input type="date" class="form-control" id="dataEmprestimo" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="dataPrevistaDevolucao" class="form-label">Data prevista da devolução</label>
+                                    <input type="date" class="form-control" id="dataPrevistaDevolucao" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="statusEmprestimo" class="form-label">Status</label>
+                                    <select class="form-select" id="statusEmprestimo" required></select>
+                                </div>
+                                <div class="col-12">
+                                    <label for="condicoesEmprestimo" class="form-label">Condições do equipamento no empréstimo</label>
+                                    <input type="text" class="form-control" id="condicoesEmprestimo" maxlength="255">
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mt-1 d-none" id="camposFinalizacao">
+                                <div class="col-md-5">
+                                    <label for="dataDevolucao" class="form-label">Data da devolução</label>
+                                    <input type="date" class="form-control" id="dataDevolucao">
+                                </div>
+                                <div class="col-md-7">
+                                    <label for="observacaoDevolucao" class="form-label">Observação na devolução/perda</label>
+                                    <input type="text" class="form-control" id="observacaoDevolucao" maxlength="255">
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2 mt-4">
+                                <button type="button" class="btn btn-outline-secondary d-none" id="btnCancelarEmprestimo">
+                                    <i class="bi bi-x-circle"></i> Cancelar edição
+                                </button>
+                                <button type="submit" class="btn btn-primary px-4" id="btnSalvarEmprestimo">
+                                    <i class="bi bi-check2-circle"></i> Salvar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <section class="card emprestimo-list-card">
+                    <div class="card-header emprestimo-list-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-list-ul text-primary fs-5"></i>
+                            <h5>Empréstimos</h5>
+                        </div>
+                        <div class="emprestimo-list-actions">
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" id="pesquisaEmprestimo" placeholder="Pesquisar pelo nome">
+                                <button class="btn btn-outline-secondary" type="button" id="btnPesquisarEmprestimo">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                            <button class="btn btn-success btn-sm" type="button" id="btnNovoEmprestimo">
+                                <i class="bi bi-plus-lg"></i> Criar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0 emprestimo-table">
+                                <thead>
+                                    <tr>
+                                        <th class="ps-4">Data</th>
+                                        <th>Equipamento</th>
+                                        <th>Colaborador</th>
+                                        <th>Status</th>
+                                        <th class="text-end pe-4">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaEmprestimos"></tbody>
+                            </table>
+                        </div>
+                        <div class="emprestimo-empty d-none" id="emprestimoVazio">
+                            <i class="bi bi-search"></i>
+                            <strong>Desculpe, mas não encontramos dados correspondentes à sua busca :(</strong>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/emprestimos.js"></script>
+</body>
+</html>

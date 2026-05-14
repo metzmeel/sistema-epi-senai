@@ -6,7 +6,7 @@ Projeto desenvolvido para a atividade de Desenvolvimento de Sistemas. O sistema 
 - [x] Tela Base (Home e Menu Lateral) implementada.
 - [x] Cadastro e listagem de Colaboradores implementados.
 - [x] Separação de arquivos CSS e JS concluída.
-- [ ] Cadastro de Equipamentos (Pendente).
+- [x] Cadastro de Equipamentos (Pendente).
 - [ ] Controle de EPI / Empréstimos (Pendente).
 
 ## 💻 Tecnologias Utilizadas
@@ -32,7 +32,7 @@ Projeto desenvolvido para a atividade de Desenvolvimento de Sistemas. O sistema 
 3. **Acessando o Sistema:**
    - Com o servidor rodando e o banco conectado, abra o arquivo **`index.html`** diretamente no seu navegador para acessar a Tela Base do sistema.
 
-## 🐳 Pesquisa: Integração com Dockerfile
+## 🐳 Pesquisa: Integração com Dockerfile (Não implementar)
 
 Para integrar o Docker neste projeto, criaríamos um arquivo chamado `Dockerfile` na raiz do projeto, sem extensão. Esse arquivo funcionaria como uma receita para empacotar o nosso servidor Node.js em um ambiente isolado (contêiner). 
 

@@ -1,0 +1,125 @@
+.controle-page {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(241, 245, 249, 0.95)),
+        #f1f5f9;
+}
+
+.controle-filter,
+.controle-results {
+    border-radius: 8px;
+}
+
+.controle-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(180px, 1fr));
+    gap: 18px;
+    align-items: end;
+}
+
+.controle-filter-actions {
+    display: flex;
+    gap: 10px;
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+}
+
+.controle-filter-actions .btn {
+    min-width: 130px;
+}
+
+.controle-count {
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.controle-table th,
+.controle-table td {
+    vertical-align: middle;
+}
+
+.controle-table td {
+    color: #334155;
+}
+
+.controle-equipment {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.controle-equipment strong {
+    color: #1e293b;
+}
+
+.controle-equipment span {
+    color: #64748b;
+    font-size: 0.82rem;
+}
+
+.controle-empty {
+    align-items: center;
+    color: #64748b;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: center;
+    min-height: 210px;
+    padding: 28px;
+    text-align: center;
+}
+
+.controle-empty i {
+    color: #94a3b8;
+    font-size: 2.3rem;
+}
+
+.status-badge {
+    border-radius: 999px;
+    display: inline-flex;
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 7px 10px;
+}
+
+.status-emprestado {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.status-fornecido {
+    background: #ccfbf1;
+    color: #0f766e;
+}
+
+.status-devolvido {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-danificado {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-perdido {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+@media (max-width: 992px) {
+    .controle-filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .controle-filter-actions {
+        justify-content: stretch;
+    }
+
+    .controle-filter-actions .btn {
+        flex: 1;
+        min-width: 0;
+    }
+}
