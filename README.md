@@ -6,8 +6,11 @@ Projeto desenvolvido para a atividade de Desenvolvimento de Sistemas. O sistema 
 - [x] Tela Base (Home e Menu Lateral) implementada.
 - [x] Cadastro e listagem de Colaboradores implementados.
 - [x] Separação de arquivos CSS e JS concluída.
-- [x] Cadastro de Equipamentos (Pendente).
-- [x] Controle de EPI / Empréstimos (Pendente).
+- [x] Cadastro de Equipamentos.
+- [x] Controle de EPI / Empréstimos.
+- [x] Pagina de Cadastro de Admin.
+- [x] Pagina de Login.
+- [x] Autenticação de usuario nas demais paginas.
 
 ## 💻 Tecnologias Utilizadas
 - HTML5, CSS3 e Bootstrap 5 (Front-end)
@@ -30,7 +33,7 @@ Projeto desenvolvido para a atividade de Desenvolvimento de Sistemas. O sistema 
      `node server.js`
 
 3. **Acessando o Sistema:**
-   - Com o servidor rodando e o banco conectado, abra o arquivo **`index.html`** diretamente no seu navegador para acessar a Tela Base do sistema.
+   - Com o servidor rodando e o banco conectado, acesse o link http://localhost:3000 e cadastre um administrador novo para utilizar o programa, ou use o administrador padrão -> CPF : 000.000.000-00 Senha : admin123 , aproveite o sistema!
 
 ## 🐳 Pesquisa: Integração com Dockerfile (Não implementar)
 
