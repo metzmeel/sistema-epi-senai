@@ -1,6 +1,7 @@
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
+const crypto = require('crypto');
 
 const app = express();
 
@@ -24,6 +25,124 @@ const DATA_INDEFINIDA = '9999-12-31';
 let colunasEmprestimoVerificadas = false;
 let verificandoColunasEmprestimo = false;
 let filaVerificacaoEmprestimo = [];
+
+function normalizarCpf(cpf) {
+    return String(cpf || '').replace(/\D/g, '');
+}
+
+function cpfTemOnzeDigitos(cpf) {
+    return normalizarCpf(cpf).length === 11;
+}
+
+function hashSenha(senha) {
+    return crypto.createHash('sha256').update(String(senha || '')).digest('hex');
+}
+
+function garantirTabelaLoginAdministrador() {
+    const sqlTabela = `
+        CREATE TABLE IF NOT EXISTS Login_Administrador (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            id_administrador INT NOT NULL,
+            cpf VARCHAR(11) NOT NULL UNIQUE,
+            senha_hash VARCHAR(64) NOT NULL,
+            criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (id_administrador) REFERENCES Administrador(id)
+        )
+    `;
+
+    db.query(sqlTabela, (err) => {
+        if (err) {
+            console.error('Erro ao preparar tabela Login_Administrador:', err.message);
+            return;
+        }
+
+        sincronizarLoginsAdministradores();
+    });
+}
+
+function sincronizarLoginsAdministradores() {
+    const sqlAdmins = `
+        SELECT u.id, u.cpf, u.senha
+        FROM Usuario_Sistema u
+        INNER JOIN Administrador a ON a.id = u.id
+        WHERE u.cpf IS NOT NULL AND u.senha IS NOT NULL
+    `;
+
+    db.query(sqlAdmins, (err, administradores) => {
+        if (err) {
+            console.error('Erro ao buscar administradores para login:', err.message);
+            return;
+        }
+
+        if (administradores.length === 0) {
+            criarAdministradorPadrao();
+            return;
+        }
+
+        administradores.forEach((admin) => {
+            const cpf = normalizarCpf(admin.cpf);
+
+            if (!cpf) {
+                return;
+            }
+
+            db.query(
+                `
+                    INSERT INTO Login_Administrador (id_administrador, cpf, senha_hash)
+                    VALUES (?, ?, ?)
+                    ON DUPLICATE KEY UPDATE
+                        id_administrador = VALUES(id_administrador),
+                        senha_hash = VALUES(senha_hash)
+                `,
+                [admin.id, cpf, hashSenha(admin.senha)],
+                (insertErr) => {
+                    if (insertErr) {
+                        console.error('Erro ao sincronizar login de administrador:', insertErr.message);
+                    }
+                }
+            );
+        });
+    });
+}
+
+function criarAdministradorPadrao() {
+    const cpfPadrao = '00000000000';
+    const senhaPadrao = 'admin123';
+
+    db.query(
+        'INSERT INTO Usuario_Sistema (nome, funcao, senha, cpf) VALUES (?, ?, ?, ?)',
+        ['Administrador SENAI', 'Administrador', senhaPadrao, cpfPadrao],
+        (errUsuario, resultUsuario) => {
+            if (errUsuario) {
+                console.error('Erro ao criar administrador padrao:', errUsuario.message);
+                return;
+            }
+
+            const idAdministrador = resultUsuario.insertId;
+
+            db.query(
+                'INSERT INTO Administrador (id, status) VALUES (?, ?)',
+                [idAdministrador, 'Ativo'],
+                (errAdmin) => {
+                    if (errAdmin) {
+                        console.error('Erro ao vincular administrador padrao:', errAdmin.message);
+                        return;
+                    }
+
+                    db.query(
+                        'INSERT INTO Login_Administrador (id_administrador, cpf, senha_hash) VALUES (?, ?, ?)',
+                        [idAdministrador, cpfPadrao, hashSenha(senhaPadrao)],
+                        (errLogin) => {
+                            if (errLogin) {
+                                console.error('Erro ao criar login do administrador padrao:', errLogin.message);
+                            }
+                        }
+                    );
+                }
+            );
+        }
+    );
+}
 
 function garantirColunasEmprestimo(callback = () => {}) {
     if (colunasEmprestimoVerificadas) {
@@ -282,6 +401,138 @@ function montarQueryEmprestimos(filtros = {}) {
     sql += ' ORDER BY e.data DESC, e.id DESC';
 
     return { sql, params };
+}
+
+app.post('/login', (req, res) => {
+    const cpf = normalizarCpf(req.body.cpf);
+    const senha = String(req.body.senha || '');
+
+    if (!cpfTemOnzeDigitos(cpf)) {
+        return res.status(400).json({ erro: 'CPF deve ter 11 digitos.' });
+    }
+
+    if (!senha) {
+        return res.status(400).json({ erro: 'Informe a senha.' });
+    }
+
+    const sql = `
+        SELECT
+            u.id,
+            u.nome,
+            u.funcao,
+            u.cpf,
+            a.status,
+            la.senha_hash
+        FROM Login_Administrador la
+        INNER JOIN Administrador a ON a.id = la.id_administrador
+        INNER JOIN Usuario_Sistema u ON u.id = a.id
+        WHERE la.cpf = ?
+        LIMIT 1
+    `;
+
+    db.query(sql, [cpf], (err, results) => {
+        if (err) {
+            return res.status(500).json({ erro: 'Erro ao validar login. Verifique se o MySQL esta rodando e se o banco foi importado.' });
+        }
+
+        if (results.length === 0 || results[0].senha_hash !== hashSenha(senha)) {
+            return res.status(401).json({ erro: 'CPF ou senha invalidos.' });
+        }
+
+        if (results[0].status !== 'Ativo') {
+            return res.status(403).json({ erro: 'Administrador inativo.' });
+        }
+
+        res.status(200).json({
+            id: results[0].id,
+            nome: results[0].nome,
+            funcao: results[0].funcao || 'Administrador',
+            cpf: results[0].cpf,
+            status: results[0].status
+        });
+    });
+});
+
+app.post('/cadastro-conta', (req, res) => {
+    const nome = String(req.body.nome || '').trim() || 'Administrador';
+    const cpf = normalizarCpf(req.body.cpf);
+    const senha = String(req.body.senha || '');
+
+    if (!cpfTemOnzeDigitos(cpf)) {
+        return res.status(400).json({ erro: 'CPF deve ter 11 digitos.' });
+    }
+
+    db.getConnection((errConexao, connection) => {
+        if (errConexao) {
+            return res.status(500).json({ erro: 'Erro ao conectar ao banco.' });
+        }
+
+        connection.beginTransaction((errTransacao) => {
+            if (errTransacao) {
+                connection.release();
+                return res.status(500).json({ erro: 'Erro ao iniciar cadastro.' });
+            }
+
+            connection.query(
+                'INSERT INTO Usuario_Sistema (nome, funcao, senha, cpf) VALUES (?, ?, ?, ?)',
+                [nome, 'Administrador', senha, cpf],
+                (errUsuario, resultUsuario) => {
+                    if (errUsuario) {
+                        return desfazerCadastro(connection, res, 'Erro ao criar usuario.');
+                    }
+
+                    const idAdministrador = resultUsuario.insertId;
+
+                    connection.query(
+                        'INSERT INTO Administrador (id, status) VALUES (?, ?)',
+                        [idAdministrador, 'Ativo'],
+                        (errAdmin) => {
+                            if (errAdmin) {
+                                return desfazerCadastro(connection, res, 'Erro ao criar administrador.');
+                            }
+
+                            connection.query(
+                                'INSERT INTO Login_Administrador (id_administrador, cpf, senha_hash) VALUES (?, ?, ?)',
+                                [idAdministrador, cpf, hashSenha(senha)],
+                                (errLogin) => {
+                                    if (errLogin) {
+                                        const mensagem = errLogin.code === 'ER_DUP_ENTRY'
+                                            ? 'CPF ja cadastrado.'
+                                            : 'Erro ao criar login.';
+
+                                        return desfazerCadastro(connection, res, mensagem, errLogin.code === 'ER_DUP_ENTRY' ? 400 : 500);
+                                    }
+
+                                    connection.commit((errCommit) => {
+                                        connection.release();
+
+                                        if (errCommit) {
+                                            return res.status(500).json({ erro: 'Erro ao finalizar cadastro.' });
+                                        }
+
+                                        res.status(201).json({
+                                            id: idAdministrador,
+                                            nome,
+                                            funcao: 'Administrador',
+                                            cpf,
+                                            status: 'Ativo'
+                                        });
+                                    });
+                                }
+                            );
+                        }
+                    );
+                }
+            );
+        });
+    });
+});
+
+function desfazerCadastro(connection, res, mensagem, status = 500) {
+    connection.rollback(() => {
+        connection.release();
+        res.status(status).json({ erro: mensagem });
+    });
 }
 
 app.post('/colaboradores', (req, res) => {
@@ -846,6 +1097,7 @@ app.put('/emprestimos/:id', prepararBancoEmprestimos, (req, res) => {
 });
 
 const server = app.listen(3000, () => {
+    garantirTabelaLoginAdministrador();
     console.log('Servidor rodando na porta 3000! (http://localhost:3000)');
 });
 

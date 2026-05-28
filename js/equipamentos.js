@@ -14,6 +14,10 @@ const btnPesquisarEquipamento = document.getElementById('btnPesquisarEquipamento
 const inputPesquisaEquipamento = document.getElementById('inputPesquisaEquipamento');
 const tabelaEquipamentos = document.getElementById('tabelaEquipamentos');
 
+function obterUsuarioLogado() {
+    return window.SisEPIAuth?.obterUsuario() || null;
+}
+
 function escaparHtml(valor) {
     return String(valor ?? '')
         .replaceAll('&', '&amp;')
@@ -195,7 +199,8 @@ formEquipamento.addEventListener('submit', async (event) => {
             body: JSON.stringify({
                 tipo: tipoEquipamento.value.trim(),
                 modelo: modeloEquipamento.value.trim(),
-                status: id ? statusEquipamento.value : 'Disponível'
+                status: id ? statusEquipamento.value : 'Disponível',
+                id_administrador: obterUsuarioLogado()?.id || null
             })
         });
 

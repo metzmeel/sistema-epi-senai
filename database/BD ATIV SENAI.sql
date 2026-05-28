@@ -22,6 +22,30 @@ CREATE TABLE Administrador (
 );
 
 -- =========================
+-- Login do administrador
+-- =========================
+CREATE TABLE Login_Administrador (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_administrador INT NOT NULL,
+    cpf VARCHAR(11) NOT NULL UNIQUE,
+    senha_hash VARCHAR(64) NOT NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_administrador) REFERENCES Administrador(id)
+);
+
+-- Acesso inicial: CPF 00000000000 / senha admin123
+INSERT INTO Usuario_Sistema (nome, funcao, senha, cpf)
+VALUES ('Administrador SENAI', 'Administrador', 'admin123', '00000000000');
+
+SET @id_admin_padrao = LAST_INSERT_ID();
+
+INSERT INTO Administrador (id, status)
+VALUES (@id_admin_padrao, 'Ativo');
+
+INSERT INTO Login_Administrador (id_administrador, cpf, senha_hash)
+VALUES (@id_admin_padrao, '00000000000', SHA2('admin123', 256));
+
+-- =========================
 -- Colaborador (herança)
 -- =========================
 CREATE TABLE Colaborador (
@@ -67,5 +91,4 @@ CREATE TABLE Emprestimo (
     FOREIGN KEY (id_equipamento) REFERENCES Equipamento(id),
     FOREIGN KEY (id_colaborador) REFERENCES Colaborador(id)
 );
-
 

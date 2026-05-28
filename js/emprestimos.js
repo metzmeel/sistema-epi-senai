@@ -29,6 +29,10 @@ const pesquisaEmprestimo = document.getElementById('pesquisaEmprestimo');
 const btnPesquisarEmprestimo = document.getElementById('btnPesquisarEmprestimo');
 let dataPrevistaOriginal = '';
 
+function obterUsuarioLogado() {
+    return window.SisEPIAuth?.obterUsuario() || null;
+}
+
 function escaparHtml(valor) {
     return String(valor ?? '')
         .replaceAll('&', '&amp;')
@@ -350,6 +354,7 @@ function montarPayload() {
     const previsaoIndefinidaOriginal = idEmprestimo.value && dataIndefinida(dataPrevistaOriginal);
 
     return {
+        id_usuario: obterUsuarioLogado()?.id || null,
         id_equipamento: emprestimoEquipamento.value,
         id_colaborador: emprestimoColaborador.value,
         data: dataEmprestimo.value,
