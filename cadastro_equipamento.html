@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão de EPIs - Cadastro de Equipamento</title>
+    <title>ConstruLoja - Cadastro de Produto</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
@@ -14,17 +14,17 @@
 
     <aside class="sidebar">
         <div class="sidebar-brand">
-            <i class="bi bi-shield-check text-primary"></i> SisEPI
+            <i class="bi bi-shop text-primary"></i> ConstruLoja
         </div>
         <ul class="sidebar-menu">
             <li><a href="index.html"><i class="bi bi-house-door"></i> Home</a></li>
             <li class="mt-3 mb-1 px-4 text-uppercase text-secondary" style="font-size: 0.75rem; letter-spacing: 1px;">Cadastros</li>
-            <li><a href="cadastro_colaborador.html"><i class="bi bi-person-badge"></i> Colaboradores</a></li>
-            <li><a href="cadastro_equipamento.html" class="active"><i class="bi bi-tools"></i> Equipamentos</a></li>
-            <li class="mt-3 mb-1 px-4 text-uppercase text-secondary" style="font-size: 0.75rem; letter-spacing: 1px;">Ação</li>
-            <li><a href="controle_epi.html"><i class="bi bi-arrow-left-right"></i> Controle de EPI</a></li>
+            <li><a href="cadastro_colaborador.html"><i class="bi bi-people"></i> Clientes</a></li>
+            <li><a href="cadastro_equipamento.html" class="active"><i class="bi bi-box-seam"></i> Produtos</a></li>
+            <li class="mt-3 mb-1 px-4 text-uppercase text-secondary" style="font-size: 0.75rem; letter-spacing: 1px;">Operação</li>
+            <li><a href="emprestimos.html"><i class="bi bi-cart-check"></i> Vendas</a></li>
             <li class="mt-3 mb-1 px-4 text-uppercase text-secondary" style="font-size: 0.75rem; letter-spacing: 1px;">Relatórios</li>
-            <li><a href="emprestimos.html"><i class="bi bi-file-earmark-text"></i> Empréstimos</a></li>
+            <li><a href="controle_epi.html"><i class="bi bi-clock-history"></i> Histórico de Vendas</a></li>
             <li class="mt-3 mb-1 px-4 text-uppercase text-secondary" style="font-size: 0.75rem; letter-spacing: 1px;">Configurações</li>
             <li><a href="#"><i class="bi bi-person-gear"></i> Perfil</a></li>
             <li><a href="#"><i class="bi bi-gear"></i> Sistema</a></li>
@@ -36,7 +36,7 @@
 
     <div class="main-wrapper">
         <header class="top-header">
-            <h2 class="header-title">Gerenciamento de Equipamentos</h2>
+            <h2 class="header-title">Gerenciamento de Produtos</h2>
             <div class="user-profile">
                 <div class="user-info text-end">
                     <span class="user-name">Administrador</span>
@@ -50,8 +50,8 @@
             <div class="container-fluid">
                 <section class="card equipamento-form-card">
                     <div class="card-header d-flex align-items-center gap-2">
-                        <i class="bi bi-tools text-primary fs-5"></i>
-                        <h5 id="tituloFormularioEquipamento">Cadastrar Novo Equipamento</h5>
+                        <i class="bi bi-box-seam text-primary fs-5"></i>
+                        <h5 id="tituloFormularioEquipamento">Cadastrar Novo Produto</h5>
                     </div>
                     <div class="card-body">
                         <div id="mensagemEquipamento"></div>
@@ -61,20 +61,20 @@
 
                             <div class="row g-3">
                                 <div class="col-md-4">
-                                    <label for="tipoEquipamento" class="form-label">Tipo</label>
-                                    <input type="text" class="form-control" id="tipoEquipamento" placeholder="Ex: Capacete" required>
+                                    <label for="tipoEquipamento" class="form-label">Categoria</label>
+                                    <input type="text" class="form-control" id="tipoEquipamento" placeholder="Ex: Cimento" required>
                                 </div>
                                 <div class="col-md-5">
-                                    <label for="modeloEquipamento" class="form-label">Modelo</label>
-                                    <input type="text" class="form-control" id="modeloEquipamento" placeholder="Ex: Classe B" required>
+                                    <label for="modeloEquipamento" class="form-label">Descrição/Modelo</label>
+                                    <input type="text" class="form-control" id="modeloEquipamento" placeholder="Ex: CP-II 50 kg" required>
                                 </div>
                                 <div class="col-md-3" id="grupoStatusEquipamento">
                                     <label for="statusEquipamento" class="form-label">Status</label>
                                     <select class="form-select" id="statusEquipamento" required>
-                                        <option value="Disponível">Disponível</option>
-                                        <option value="Emprestado">Emprestado</option>
-                                        <option value="Danificado">Danificado</option>
-                                        <option value="Perdido">Perdido</option>
+                                        <option value="Disponível">Em estoque</option>
+                                        <option value="Emprestado">Vendido</option>
+                                        <option value="Danificado">Com avaria</option>
+                                        <option value="Perdido">Extraviado</option>
                                     </select>
                                 </div>
                             </div>
@@ -84,7 +84,7 @@
                                     <i class="bi bi-x-circle"></i> Cancelar edição
                                 </button>
                                 <button type="submit" class="btn btn-primary px-4" id="btnSalvarEquipamento">
-                                    <i class="bi bi-check2-circle"></i> Salvar Equipamento
+                                    <i class="bi bi-check2-circle"></i> Salvar Produto
                                 </button>
                             </div>
                         </form>
@@ -95,10 +95,10 @@
                     <div class="card-header equipamento-list-header">
                         <div class="d-flex align-items-center gap-2">
                             <i class="bi bi-list-ul text-primary fs-5"></i>
-                            <h5>Lista de Equipamentos</h5>
+                            <h5>Lista de Produtos</h5>
                         </div>
                         <div class="input-group input-group-sm equipamento-search">
-                            <input type="text" class="form-control" id="inputPesquisaEquipamento" placeholder="Pesquisar por tipo ou modelo...">
+                            <input type="text" class="form-control" id="inputPesquisaEquipamento" placeholder="Pesquisar por categoria ou descrição...">
                             <button class="btn btn-outline-secondary" type="button" id="btnPesquisarEquipamento">
                                 <i class="bi bi-search"></i>
                             </button>
@@ -110,8 +110,8 @@
                                 <thead>
                                     <tr>
                                         <th class="ps-4">ID</th>
-                                        <th>Tipo</th>
-                                        <th>Modelo</th>
+                                        <th>Categoria</th>
+                                        <th>Descrição/Modelo</th>
                                         <th>Status</th>
                                         <th class="text-end pe-4">Ações</th>
                                     </tr>
@@ -126,6 +126,7 @@
     </div>
 
     <script src="js/auth.js"></script>
+    <script src="js/textos-loja.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/equipamentos.js"></script>
 </body>

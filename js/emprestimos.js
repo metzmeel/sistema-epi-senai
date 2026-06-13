@@ -29,6 +29,14 @@ const pesquisaEmprestimo = document.getElementById('pesquisaEmprestimo');
 const btnPesquisarEmprestimo = document.getElementById('btnPesquisarEmprestimo');
 let dataPrevistaOriginal = '';
 
+function textoLoja(texto) {
+    return window.TextosLoja?.traduzirTexto(texto) || texto;
+}
+
+function labelStatusVenda(status) {
+    return window.TextosLoja?.statusVenda(status) || status || '-';
+}
+
 function obterUsuarioLogado() {
     return window.SisEPIAuth?.obterUsuario() || null;
 }
@@ -96,14 +104,14 @@ function classeStatus(status) {
 }
 
 function badgeStatus(status) {
-    return `<span class="status-badge ${classeStatus(status)}">${escaparHtml(status || '-')}</span>`;
+    return `<span class="status-badge ${classeStatus(status)}">${escaparHtml(labelStatusVenda(status))}</span>`;
 }
 
 function mostrarAlerta(tipo, mensagem) {
     emprestimoAlerta.innerHTML = `
         <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
             <i class="bi ${tipo === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'} me-2"></i>
-            ${escaparHtml(mensagem)}
+            ${escaparHtml(textoLoja(mensagem))}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     `;
@@ -112,7 +120,7 @@ function mostrarAlerta(tipo, mensagem) {
 function renderizarStatus(editando = false) {
     const opcoes = editando ? STATUS_EDICAO : STATUS_CADASTRO;
     statusEmprestimo.innerHTML = opcoes
-        .map((status) => `<option value="${status}">${status}</option>`)
+        .map((status) => `<option value="${status}">${labelStatusVenda(status)}</option>`)
         .join('');
     statusEmprestimo.value = opcoes[0];
     alternarCamposFinalizacao();
@@ -185,20 +193,20 @@ async function carregarCombos(emprestimoAtualId = '') {
     const colaboradores = await colaboradoresResponse.json();
 
     if (!equipamentosResponse.ok) {
-        throw new Error(equipamentos.error || 'Erro ao carregar equipamentos.');
+        throw new Error(equipamentos.error || 'Erro ao carregar produtos.');
     }
 
     if (!colaboradoresResponse.ok) {
-        throw new Error(colaboradores.error || 'Erro ao carregar colaboradores.');
+        throw new Error(colaboradores.error || 'Erro ao carregar clientes.');
     }
 
     preencherSelect(
         emprestimoEquipamento,
         equipamentos,
-        'Selecione um equipamento',
+        'Selecione um produto',
         (equipamento) => `
             <option value="${equipamento.id}">
-                ${escaparHtml(equipamento.tipo)} - ${escaparHtml(equipamento.modelo)} (${escaparHtml(equipamento.status || 'Sem status')})
+                ${escaparHtml(equipamento.tipo)} - ${escaparHtml(equipamento.modelo)} (${escaparHtml(window.TextosLoja?.statusProduto(equipamento.status) || equipamento.status || 'Sem status')})
             </option>
         `
     );
@@ -206,10 +214,10 @@ async function carregarCombos(emprestimoAtualId = '') {
     preencherSelect(
         emprestimoColaborador,
         colaboradores,
-        'Selecione um colaborador',
+        'Selecione um cliente',
         (colaborador) => `
             <option value="${colaborador.id}">
-                ${escaparHtml(colaborador.nome)} - ${escaparHtml(colaborador.setor || 'Sem setor')}
+                ${escaparHtml(colaborador.nome)} - ${escaparHtml(colaborador.setor || 'Sem endereço')}
             </option>
         `
     );
@@ -247,7 +255,7 @@ function renderizarEmprestimos(emprestimos) {
     emprestimos.forEach((emprestimo) => {
         const fornecido = emprestimo.status === STATUS_FORNECIDO;
         const acao = fornecido
-            ? `<button class="btn btn-sm btn-outline-secondary" type="button" disabled title="Item fornecido não pode ser editado">
+            ? `<button class="btn btn-sm btn-outline-secondary" type="button" disabled title="Venda concluída não pode ser editada">
                     <i class="bi bi-lock"></i> Bloqueado
                </button>`
             : `<button class="btn btn-sm btn-outline-primary btn-editar-emprestimo" type="button" data-id="${emprestimo.id}">
@@ -259,11 +267,11 @@ function renderizarEmprestimos(emprestimos) {
             <td class="ps-4">${formatarData(emprestimo.data)}</td>
             <td>
                 <span class="emprestimo-equipment">
-                    <strong>${escaparHtml(emprestimo.equipamento_tipo || 'Equipamento')}</strong>
-                    <span>${escaparHtml(emprestimo.equipamento_modelo || 'Sem modelo informado')}</span>
+                    <strong>${escaparHtml(emprestimo.equipamento_tipo || 'Produto')}</strong>
+                    <span>${escaparHtml(emprestimo.equipamento_modelo || 'Sem descrição informada')}</span>
                 </span>
             </td>
-            <td class="fw-semibold">${escaparHtml(emprestimo.colaborador_nome || 'Colaborador não encontrado')}</td>
+            <td class="fw-semibold">${escaparHtml(emprestimo.colaborador_nome || 'Cliente não encontrado')}</td>
             <td>${badgeStatus(emprestimo.status)}</td>
             <td class="text-end pe-4">
                 ${acao}
@@ -285,7 +293,7 @@ async function carregarEmprestimos(busca = '') {
         const emprestimos = await response.json();
 
         if (!response.ok) {
-            throw new Error(emprestimos.error || 'Erro ao carregar empréstimos.');
+            throw new Error(emprestimos.error || 'Erro ao carregar vendas.');
         }
 
         renderizarEmprestimos(emprestimos);
@@ -300,7 +308,7 @@ function resetarFormulario() {
     formEmprestimo.reset();
     idEmprestimo.value = '';
     dataPrevistaOriginal = '';
-    tituloEmprestimo.textContent = 'Cadastro';
+    tituloEmprestimo.textContent = 'Cadastro de venda';
     renderizarStatus(false);
     alternarCamposTravados(false);
     btnSalvarEmprestimo.innerHTML = '<i class="bi bi-check2-circle"></i> Salvar';
@@ -317,7 +325,7 @@ async function prepararEdicao(id) {
         const emprestimo = await response.json();
 
         if (!response.ok) {
-            throw new Error(emprestimo.error || 'Erro ao buscar empréstimo.');
+            throw new Error(emprestimo.error || 'Erro ao buscar venda.');
         }
 
         await carregarCombos(id);
@@ -333,7 +341,7 @@ async function prepararEdicao(id) {
         dataDevolucao.value = dataParaInput(emprestimo.data_devolucao);
         observacaoDevolucao.value = emprestimo.observacao_devolucao || '';
 
-        tituloEmprestimo.textContent = 'Atualizar';
+        tituloEmprestimo.textContent = 'Atualizar venda';
         alternarCamposTravados(true);
         btnSalvarEmprestimo.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Salvar';
         btnSalvarEmprestimo.classList.remove('btn-primary');
@@ -403,19 +411,19 @@ formEmprestimo.addEventListener('submit', async (event) => {
     const fornecido = statusEmprestimo.value === STATUS_FORNECIDO;
 
     if (!fornecido && !dataPosterior(dataPrevistaDevolucao.value, dataEmprestimo.value)) {
-        mostrarAlerta('danger', 'A data prevista de devolução deve ser posterior à data do empréstimo.');
+        mostrarAlerta('danger', 'A data prevista de entrega deve ser posterior à data da venda.');
         dataPrevistaDevolucao.focus();
         return;
     }
 
     if (!fornecido && !idEmprestimo.value && !dataPosterior(dataPrevistaDevolucao.value, dataAtualInput())) {
-        mostrarAlerta('danger', 'A data prevista de devolução deve ser posterior à data atual.');
+        mostrarAlerta('danger', 'A data prevista de entrega deve ser posterior à data atual.');
         dataPrevistaDevolucao.focus();
         return;
     }
 
     if (STATUS_FINALIZADO.includes(statusEmprestimo.value) && !dataPosterior(dataDevolucao.value, dataEmprestimo.value)) {
-        mostrarAlerta('danger', 'A data da devolução deve ser posterior à data do empréstimo.');
+        mostrarAlerta('danger', 'A data da finalização deve ser posterior à data da venda.');
         dataDevolucao.focus();
         return;
     }
@@ -436,7 +444,7 @@ formEmprestimo.addEventListener('submit', async (event) => {
         const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(result.error || 'Erro ao salvar empréstimo.');
+            throw new Error(result.error || 'Erro ao salvar venda.');
         }
 
         mostrarAlerta('success', result.message);

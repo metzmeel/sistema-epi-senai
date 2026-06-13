@@ -10,6 +10,14 @@ const DATA_INDEFINIDA = '9999-12-31';
 const TEXTO_DATA_INDEFINIDA = 'Indefinido';
 const STATUS_FORNECIDO = 'Fornecido';
 
+function textoLoja(texto) {
+    return window.TextosLoja?.traduzirTexto(texto) || texto;
+}
+
+function labelStatusVenda(status) {
+    return window.TextosLoja?.statusVenda(status) || status || '-';
+}
+
 function escaparHtml(valor) {
     return String(valor ?? '')
         .replaceAll('&', '&amp;')
@@ -49,7 +57,7 @@ function classeStatus(status) {
 }
 
 function badgeStatus(status) {
-    return `<span class="status-badge ${classeStatus(status)}">${escaparHtml(status || '-')}</span>`;
+    return `<span class="status-badge ${classeStatus(status)}">${escaparHtml(labelStatusVenda(status))}</span>`;
 }
 
 function montarParametrosFiltro() {
@@ -89,12 +97,12 @@ function renderizarControle(emprestimos) {
     controleVazio.classList.add('d-none');
 
     emprestimos.forEach((emprestimo) => {
-        const equipamento = emprestimo.equipamento_tipo || 'Equipamento';
-        const modelo = emprestimo.equipamento_modelo || 'Sem modelo informado';
-        const colaborador = emprestimo.colaborador_nome || 'Colaborador não encontrado';
+        const equipamento = emprestimo.equipamento_tipo || 'Produto';
+        const modelo = emprestimo.equipamento_modelo || 'Sem descrição informada';
+        const colaborador = emprestimo.colaborador_nome || 'Cliente não encontrado';
         const fornecido = emprestimo.status === STATUS_FORNECIDO;
         const acao = fornecido
-            ? `<button class="btn btn-sm btn-outline-secondary" type="button" disabled title="Item fornecido não pode ser editado">
+            ? `<button class="btn btn-sm btn-outline-secondary" type="button" disabled title="Venda concluída não pode ser editada">
                     <i class="bi bi-lock"></i> Bloqueado
                </button>`
             : `<button class="btn btn-sm btn-outline-primary btn-editar-controle" type="button" data-id="${emprestimo.id}">
@@ -130,7 +138,7 @@ async function carregarControle() {
         const emprestimos = await response.json();
 
         if (!response.ok) {
-            throw new Error(emprestimos.error || 'Erro ao buscar empréstimos.');
+            throw new Error(emprestimos.error || 'Erro ao buscar vendas.');
         }
 
         renderizarControle(emprestimos);
@@ -140,7 +148,7 @@ async function carregarControle() {
         atualizarTotal(0);
         controleAlerta.innerHTML = `
             <div class="alert alert-danger" role="alert">
-                <i class="bi bi-x-circle-fill me-2"></i>${escaparHtml(error.message)}
+                <i class="bi bi-x-circle-fill me-2"></i>${escaparHtml(textoLoja(error.message))}
             </div>
         `;
     }

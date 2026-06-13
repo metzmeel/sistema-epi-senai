@@ -1,5 +1,9 @@
 // js/colaborador.js
 
+function textoLoja(texto) {
+    return window.TextosLoja?.traduzirTexto(texto) || texto;
+}
+
 // Função executada quando o formulário é enviado (Cadastro ou Edição)
 document.getElementById('formCadastro').addEventListener('submit', async function(event) {
     event.preventDefault();
@@ -30,14 +34,14 @@ document.getElementById('formCadastro').addEventListener('submit', async functio
 
         if (response.ok) {
             alerta.innerHTML = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    <i class="bi bi-check-circle-fill me-2"></i> ${result.message}
+                                    <i class="bi bi-check-circle-fill me-2"></i> ${textoLoja(result.message)}
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>`;
             cancelarEdicao();
             carregarColaboradores();
         } else {
             alerta.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <i class="bi bi-exclamation-triangle-fill me-2"></i> ${result.error}
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i> ${textoLoja(result.error)}
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>`;
         }
@@ -56,7 +60,7 @@ async function carregarColaboradores(busca = '') {
         tbody.innerHTML = '';
 
         if(colaboradores.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-muted">Nenhum colaborador encontrado.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-muted">Nenhum cliente encontrado.</td></tr>`;
             return;
         }
 
@@ -104,7 +108,7 @@ document.getElementById('inputPesquisa').addEventListener('keypress', function (
 
 // Prepara o formulário para edição preenchendo os dados
 function prepararEdicao(id, nome, cpf, cargo, setor, status) {
-    document.getElementById('tituloFormulario').innerText = 'Atualizar Colaborador';
+    document.getElementById('tituloFormulario').innerText = 'Atualizar Cliente';
     
     document.getElementById('idColaborador').value = id;
     document.getElementById('nome').value = nome;
@@ -125,12 +129,12 @@ function prepararEdicao(id, nome, cpf, cargo, setor, status) {
 
 // Reseta o formulário e volta para o modo "Cadastro"
 function cancelarEdicao() {
-    document.getElementById('tituloFormulario').innerText = 'Cadastrar Novo Colaborador';
+    document.getElementById('tituloFormulario').innerText = 'Cadastrar Novo Cliente';
     document.getElementById('formCadastro').reset();
     document.getElementById('idColaborador').value = '';
     
     const btnSalvar = document.getElementById('btnSalvar');
-    btnSalvar.innerHTML = '<i class="bi bi-check2-circle"></i> Salvar Colaborador';
+    btnSalvar.innerHTML = '<i class="bi bi-check2-circle"></i> Salvar Cliente';
     btnSalvar.classList.replace('btn-warning', 'btn-primary');
     
     document.getElementById('btnCancelar').classList.add('d-none');
@@ -138,7 +142,7 @@ function cancelarEdicao() {
 
 // Exclui um registro após confirmação (Alerta)
 async function excluirColaborador(id) {
-    if (confirm('Tem certeza que deseja excluir permanentemente este colaborador?')) {
+    if (confirm('Tem certeza que deseja excluir permanentemente este cliente?')) {
         try {
             const response = await fetch('http://localhost:3000/colaboradores/' + id, {
                 method: 'DELETE'
@@ -149,13 +153,13 @@ async function excluirColaborador(id) {
             
             if (response.ok) {
                 alerta.innerHTML = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        <i class="bi bi-check-circle-fill me-2"></i> ${result.message}
+                                        <i class="bi bi-check-circle-fill me-2"></i> ${textoLoja(result.message)}
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>`;
                 carregarColaboradores();
             } else {
                 alerta.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                        <i class="bi bi-exclamation-triangle-fill me-2"></i> ${result.error}
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i> ${textoLoja(result.error)}
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>`;
             }
